@@ -1,0 +1,8 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "ble server",
+  "main": "index.js",
+  "author": "kani",
+  "license": "MIT"
+}
