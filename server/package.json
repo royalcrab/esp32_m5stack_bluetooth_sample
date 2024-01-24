@@ -4,5 +4,11 @@
   "description": "ble server",
   "main": "index.js",
   "author": "kani",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "dev": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }

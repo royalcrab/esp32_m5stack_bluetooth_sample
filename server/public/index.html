@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<body>
+    <button onclick="connectButton">Connect to ESP32</button>
+    <button onclick="sendButton">Send Data</button>
+</body>
+<script>
+
+let device;
+let characteristic;
+let server;
+let service;
+
+//const SERVICE_UUID        = "5c627b1e-717b-4231-9ddf-727f14f58724";
+//const CHARACTERISTIC_UUID = "6c16e57f-7200-4228-af80-30547b37bea3";
+
+const SERVICE_UUID        =  "84ff873e-d73b-40a7-b493-497b62f8bbf1"
+const CHARACTERISTIC_UUID =  "1d0d5c5a-cafc-4fc5-a957-6d909d39e281"
+
+const connectButton = async () => {
+  try {
+    device = await navigator.bluetooth.requestDevice({
+        filters: [{ services: [SERVICE_UUID] }] // ESP32のサービスUUID
+    });
+
+    server = await device.gatt.connect();
+    service = await server.getPrimaryService(SERVICE_UUID); // ESP32のサービスUUID
+    characteristic = await service.getCharacteristic(CHARACTERISTIC_UUID); // ESP32のキャラクタリスティックUUID
+
+    console.log('Connected to ESP32');
+
+    characteristic.addEventListener('characteristicvaluechanged', (event) => {
+      const data = event.target.value; // バイナリデータを取得
+      const dataArray = new Uint8Array(data.buffer); // バイナリデータをUint8Arrayに変換
+
+      // 最初の256バイトをコンソールに表示
+      console.log('Received Data (First 256 Bytes): ', dataArray.slice(0, 256));
+    });
+
+    // データの受信を開始
+    await characteristic.startNotifications();
+  } catch (error) {
+      console.error('Error connecting to ESP32:', error);
+  }
+};
+
+const sendButton = async () => {
+    if (!characteristic) {
+        console.error('Not connected to ESP32');
+        return;
+    }
+
+    const data = new Uint8Array(256); // 256バイトのデータを作成または準備します
+    // データを埋めるまたは生成するコードをここに追加
+    for ( let i = 0; i < 256; i++ ){
+      data[i] = i;
+    }
+    try {
+        await characteristic.writeValue(data);
+        console.log('Data sent to ESP32');
+    } catch (error) {
+        console.error('Error sending data:', error);
+    }
+};
+
+</script>
