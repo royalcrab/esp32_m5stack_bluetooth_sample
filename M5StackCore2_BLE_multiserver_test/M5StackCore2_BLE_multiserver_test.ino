@@ -41,6 +41,7 @@ class RequestCallbacks : public BLECharacteristicCallbacks
       for(int i = 0; i < 256; i++){
         Serial.print(i,HEX);
       }
+      Serial.println(".");
     }
     void onRead(BLECharacteristic *pCharacteristic){
       
